@@ -1,0 +1,82 @@
+<!doctype html>
+<html ng-app="todoApp">
+    <head>
+        <script src="lib/angular-1.6.0.js" type="text/javascript"></script>
+        <script src="js/todo.js" type="text/javascript"></script>
+
+        <link href="lib/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+        <link href="css/todo.css" rel="stylesheet" type="text/css">
+    </head>
+
+    <body class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-12 wrap-todo">
+                        <div class="text-center todo-text">todos</div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div ng-controller="todoController as todoList" class="list">
+                                    <form class="form" ng-submit="todoList.addTodo()">
+                                        <ul class="unstyled">
+                                            <li class="padding_top_10">
+                                                <label class="checkbox">
+                                                    <input type="checkbox" ng-model="todoList.new_done">
+
+                                                    <input type="text" ng-model="todoList.todoText" size="30" 
+                                                    placeholder="What needs to be done?">
+                                                </label>
+                                                <hr>
+                                            </li>
+                                        </ul> 
+                                    </form>
+
+                                    <ul class="unstyled">
+                                        <li ng-repeat="todo in todoList.sortingTodo()">
+
+                                            <label class="checkbox">
+                                                <input type="checkbox" ng-model="todo.done">
+                                                <span class="done-{{todo.done}}">{{todo.text}}</span>
+                                            </label>
+                                            <hr>
+                                        </li>
+                                    </ul> 
+                            
+                                    <div class="row footer">
+                                        <div class="col-md-12"> 
+                                            <div class="col-md-2">{{todoList.sortingTodo()}} item left</div>
+
+                                            <div class="col-md-10">
+                                                <button type="button" class="btn btn-default" 
+                                                    ng-class="{ 'active_all' : todoList.button_active == 'all' }" 
+                                                    ng-click="todoList.activeButton('all')">
+                                                    All
+                                                </button>
+                                            
+                                                <button type="button" class="btn btn-default" 
+                                                    ng-class="{ 'active_all' : todoList.button_active == 'active' }" 
+                                                    ng-click="todoList.activeButton('active')">
+                                                    Active
+                                                </button>
+                                          
+                                                <button type="button" class="btn btn-default" 
+                                                    ng-class="{ 'active_all' : todoList.button_active == 'completed' }" 
+                                                    ng-click="todoList.activeButton('completed')">
+                                                    Completed
+                                                </button>
+                                            
+                                                <button type="button" class="btn btn-default" ng-click="todoList.clear()">
+                                                    Clear completed
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
