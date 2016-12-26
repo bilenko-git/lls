@@ -1,48 +1,89 @@
-angular.module('todoApp', [])
-	.controller('todoController', function() {
+'use strict';
+
+var app = angular.module('AppModule', ['ngMaterial', 'ngMdIcons', 'ngCookies', 'ngStorage']);
+
+app.controller('AppCtrl', function( $scope, $cookies, $sessionStorage, $mdBottomSheet, $mdSidenav, $q, $mdDialog ) {
+    $scope.toggleSidenav = function(menuId) {
+        $mdSidenav(menuId).toggle();
+    };
+
+    $scope.activity = [{
+        what: 'Create a company',
+        who: 'Ali Conners',
+        when: '3:08PM',
+        notes: " I'll be in your neighborhood doing errands"
+    }];
+
+    $scope.alert = '';
+    $scope.showListBottomSheet = function( $event ) {
+        $scope.alert = '';
+
+        $mdBottomSheet.show({
+            template: '<md-bottom-sheet class="md-list md-has-header"> <md-subheader>Settings</md-subheader> <md-list> <md-item ng-repeat="item in items"><md-item-content md-ink-ripple flex class="inset"> <a flex aria-label="{{item.name}}" ng-click="listItemClick($index)"> <span class="md-inline-list-icon-label">{{ item.name }}</span> </a></md-item-content> </md-item> </md-list></md-bottom-sheet>',
+            controller: 'ListBottomSheetCtrl',
+            targetEvent: $event
+        }).then(function( clickedItem ) {
+            $scope.alert = clickedItem.name + ' clicked!';
+        });
+    };
+  
+    $scope.showAdd = function( ev ) {
+        $mdDialog.show({
+            controller: DialogController,
+            template: '<md-dialog aria-label="Mango (Fruit)"> <md-content class="md-padding"> <form name="userForm"><div layout layout-sm="column"> <md-input-container flex> <label>Task</label> <input ng-model="user.firstName" placeholder="Task text"></input> </md-input-container> </div> </form> </md-content> <div class="md-actions" layout="row"> <span flex></span> <md-button ng-click="answer(\'not useful\')"> Cancel </md-button> <md-button ng-click="answer(\'useful\')" class="md-primary"> Save </md-button> </div></md-dialog>',
+            targetEvent: ev,
+        })
+        .then(function(answer) {
+            $scope.alert = 'You said the information was "' + answer + '".';
+        }, function() {
+            $scope.alert = 'You cancelled the dialog.';
+        });
+    };
+});
+
+app.controller('ListBottomSheetCtrl', function( $scope, $mdBottomSheet ) {
+    $scope.items = [
+        { name: 'add task', icon: 'add' },
+    ];
+  
+    $scope.listItemClick = function( $index ) {
+        var clickedItem = $scope.items[$index];
+        $mdBottomSheet.hide(clickedItem);
+    };
+});
+
+function DialogController( $scope, $mdDialog ) {
+  	$scope.hide = function() {
+  		  $mdDialog.hide();
+  	};
+
+  	$scope.cancel = function() {
+  		  $mdDialog.cancel();
+  	};
 	
-	var todoList = this;
-	todoList.button_active = 'all';
-	
-	todoList.todos = [
-		{ text:'Buy flowers', done:false },
-		{ text:'Drink beer', done:true }
-	];
+  	$scope.answer = function(answer) {
+		    $mdDialog.hide(answer);
+  	};
+};
 
-	todoList.addTodo = function() {
-		console.log('add');
-		var text = todoList.todoText;
+app.config(function( $mdThemingProvider ) {
+  	var customBlueMap = $mdThemingProvider.extendPalette('light-blue', {
+    		'contrastDefaultColor': 'light',
+    		'contrastDarkColors': ['50'],
+    		'50': '6b6b99'
+  	});
+  
+    $mdThemingProvider.definePalette( 'customBlue', customBlueMap );
+  
+    $mdThemingProvider
+    		.theme('default')
+      	.primaryPalette('customBlue', {
+        		'default': '500',
+        		'hue-1': '50'
+      	})
+  	    .primaryPalette('grey')
+  	    .accentPalette('blue-grey');
 
-		if(text) {
-			todoList.todos.push( {
-				text: text, 
-				done: todoList.new_done
-			});
-
-			todoList.todoText = '';
-		}
-	};
-
-	todoList.sortingTodo = function() {
-		todoList.count = 0;
-
-		angular.forEach(todoList.todos, function(todo) {
-			if(1) {
-				console.log(todo.done);
-
-				todoList.todos = todo;
-				//todoList.count += todo.done ? 0 : 1;
-			}
-		});
-		console.log(todoList.todos);
-		return todoList.todos;
-	}
-
-	todoList.activeButton = function(button) {
-		todoList.button_active = button; 
-	};
-
-	todoList.clear = function() {
-		todoList.todos = [];
-	};
+  	$mdThemingProvider.theme('input', 'default')
+        .primaryPalette('grey')
 });
