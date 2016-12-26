@@ -32,8 +32,12 @@
 
             <md-menu-bar>
                 <md-menu>
-                    <md-button class="navButton" layout="row" ng-repeat="section in menu" >
-                        {{section.Project.title}} {{section.Project.task_count}} ( id - {{section.Project.id}} )
+                    <md-button class="navButton" 
+                        ng-class="{'active': value.Project.id == activeMenu}" 
+                        layout="row" 
+                        ng-repeat="value in menu">
+                        
+                        {{value.Project.title}} {{value.Project.task_count}} ( id - {{value.Project.id}} )
                     </md-button>
                 </md-menu>
             </md-menu-bar>

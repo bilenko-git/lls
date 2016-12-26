@@ -6,8 +6,6 @@ app.controller('AppCtrl', function( $scope, $sessionStorage, $mdBottomSheet, $md
     var sessionKey = cookie.get('sessionKey');
     
     function renderPage(sessionKey) {
-        var project_id = 23317;
-
         http.getUser({ 
             'sessionKey' : sessionKey 
         }).success(function (response) {
@@ -17,23 +15,28 @@ app.controller('AppCtrl', function( $scope, $sessionStorage, $mdBottomSheet, $md
         http.getLeftMenu({ 
             'sessionKey' : sessionKey 
         }).success(function (response) {
+            var firstMenu = response.projects[0].Project.id;
+            $scope.activeMenu = firstMenu;
             $scope.menu = response.projects;
+            fetchTasks(firstMenu);
         });
+    }  
 
+    function fetchTasks(projectId) {
         http.fetchTasks({ 
             'sessionKey' : sessionKey, 
-            'projectId' : project_id, 
+            'projectId' : projectId, 
             'paging_size' : 100, 
             'paging_offset' : 0 
         }).success(function (response) {
             $scope.tasks = response.tasks;
         });
-    }  
+    }
 
     if(sessionKey) {
         renderPage( sessionKey );
     } else {
-        cookieService.set().then(function( sessionKey ) {
+        cookie.set().then(function( sessionKey ) {
             renderPage( sessionKey );
         });
     }
@@ -72,7 +75,7 @@ app.controller('settingsPenelCtrl', function( $scope, $mdBottomSheet ) {
     };
 });
 
-app.controller('addTaskModalCtrl', function( $scope, $mdDialog, http, cookie) {
+app.controller('addTaskModalCtrl', function( $scope, $mdDialog, http, cookie ) {
     $scope.hide = function() {
         $mdDialog.hide();
     };
@@ -82,11 +85,9 @@ app.controller('addTaskModalCtrl', function( $scope, $mdDialog, http, cookie) {
     };
   
     $scope.answer = function(answer) {
-        var project_id = 23317;
-
         http.createTasks({ 
             'sessionKey' : cookie.get('sessionKey'), 
-            'projectId' : project_id, 
+            'projectId' : $scope.activeMenu, 
             'description' : '', 
             'title' : $scope.description_task 
         }).success(function (response) {
