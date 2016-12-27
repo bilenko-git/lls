@@ -90,7 +90,7 @@ app.factory('http', function( $http ) {
 
 app.factory('cookie', function( $cookies, http ) {
     return {
-        set : function() {
+        set: function() {
             return http.signup().success(function (response) {
                 $cookies.put("sessionKey", response.session, {
                     path: '/'

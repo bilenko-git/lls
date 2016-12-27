@@ -36,8 +36,8 @@ app.controller('AppCtrl', function( $scope, $sessionStorage, $mdBottomSheet, $md
     if(sessionKey) {
         renderPage( sessionKey );
     } else {
-        cookie.set().then(function( sessionKey ) {
-            renderPage( sessionKey );
+        cookie.set().then(function( response ) {
+            renderPage( response.data.session );
         });
     }
 
