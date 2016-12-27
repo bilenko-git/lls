@@ -78,16 +78,20 @@ app.factory('http', function( $http ) {
         });
     };
 
+    API.signup = function() {
+        return $http({
+            method: 'POST', 
+            url: 'https://api-test-task.decodeapps.io/signup'
+        });
+    };
+
     return API;
 });
 
 app.factory('cookie', function( $cookies, http ) {
     return {
         set : function() {
-            return http({
-                method: 'POST', 
-                url: 'https://api-test-task.decodeapps.io/signup'
-            }).then(function( response ) {
+            return http.signup().success(function (response) {
                 $cookies.put("sessionKey", response.session, {
                     path: '/'
                 });
